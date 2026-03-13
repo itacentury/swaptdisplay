@@ -51,11 +51,11 @@ async def get_data():
             return
         
         data = response.json()
-        data_tuples = get_data_tuples(data)
+        formatted_data = format_data(data)
         
-        return data_tuples
+        return formatted_data
 
-def get_data_tuples(data: Any) -> list[tuple] | None:
+def format_data(data: Any) -> list[tuple] | None:
     if not data:
         return None
 
