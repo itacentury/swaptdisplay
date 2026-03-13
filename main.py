@@ -21,44 +21,39 @@ class SwaptDisplay(App):
         table = self.query_one(DataTable)
         table.add_columns(("Linie", "linie_col"), ("Ziel", "ziel_col"), ("Soll", "soll_col"), ("Ist", "ist_col"), ("Verspätung", "verspaetung_col"))
 
-        url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
-
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            if response.status_code != 200:
-                print(response.status_code)
-                return
-
-            data = response.json()
-            data_tuples = get_data_tuples(data)
-            if data_tuples is None:
-                return
-            
-            table.add_rows(data_tuples)
+        data = get_data()
+        if data is None:
+            return
+        
+        table.add_rows(data)
 
         self.set_interval(30, self.update_table)
 
     @work(exclusive=True)
     async def update_table(self) -> None:
         table = self.query_one(DataTable)
-        url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
+        data = get_data()
+        if data is None:
+            return
 
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            if response.status_code != 200:
-                return
-            
-            data = response.json()
-            data_tuples = get_data_tuples(data)
-            if data_tuples is None:
-                return
-            
-
-            for i, row in enumerate(table.rows):
-                for j, col in enumerate(["linie_col", "ziel_col", "soll_col", "ist_col", "verspaetung_col"]):
-                    table.update_cell(row, col, data_tuples[i][j])
+        for i, row in enumerate(table.rows):
+            for j, col in enumerate(["linie_col", "ziel_col", "soll_col", "ist_col", "verspaetung_col"]):
+                table.update_cell(row, col, data[i][j])
 
         self.notify("Updated table!")
+
+async def get_data():
+    url = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        if response.status_code != 200:
+            return
+        
+        data = response.json()
+        data_tuples = get_data_tuples(data)
+        
+        return data_tuples
 
 def get_data_tuples(data: Any) -> list[tuple] | None:
     if not data:
