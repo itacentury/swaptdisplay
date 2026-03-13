@@ -19,14 +19,14 @@ class AppDisplay(App):
         yield Footer()
         yield DataTable()
 
-    def on_mount(self) -> None:
+    async def on_mount(self) -> None:
         table = self.query_one(DataTable)
         table.add_columns(("Linie", "linie_col"), ("Ziel", "ziel_col"), ("Soll", "soll_col"), ("Ist", "ist_col"), ("Verspätung", "verspaetung_col"))
 
         url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
 
-        with httpx.Client() as client:
-            response = client.get(url)
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
             if response.status_code != 200:
                 print(response.status_code)
                 return
