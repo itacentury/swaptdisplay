@@ -11,9 +11,7 @@ BARFUESSERBRUECKE: Final[int] = 780110
 MORITZPLATZ: Final[int] = 780230
 HALLE_SAALE: Final[int] = 8010159
 
-class AppDisplay(App):
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
-
+class SwaptDisplay(App):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
@@ -62,9 +60,6 @@ class AppDisplay(App):
 
         self.notify("Updated table!")
 
-    def action_toggle_dark(self) -> None:
-        self.theme = ("textual-dark" if self.theme == "textual-light" else "textual-light")
-
 def get_data_tuples(data: Any) -> list[tuple] | None:
     if not data:
         return None
@@ -97,14 +92,14 @@ def get_data_tuples(data: Any) -> list[tuple] | None:
 
         plannedWhen_formatted: str = plannedWhen.time().isoformat("minutes")
         when_formatted: str = when.time().isoformat("minutes")
-        delay_formatted: int = delay.seconds // 60
+        delay_formatted: int = int(delay.total_seconds() // 60)
 
         processed_data.append((name, direction, plannedWhen_formatted, when_formatted, delay_formatted))
 
     return processed_data
 
 def main() -> None:
-    app = AppDisplay()
+    app = SwaptDisplay()
     app.run()
 
 
