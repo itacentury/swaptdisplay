@@ -1,7 +1,7 @@
 """TUI application for displaying real-time public transport departures."""
 
 from datetime import UTC, datetime
-from enum import IntEnum
+from enum import Enum
 from typing import Any, Final, NamedTuple
 
 import httpx
@@ -10,12 +10,20 @@ from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header
 
 
-class Station(IntEnum):
+class Station(Enum):
     """Mapping of station names to their transport API IDs."""
 
-    BARFUESSERBRUECKE = 780110
-    MORITZPLATZ = 780230
-    HALLE_SAALE = 8010159
+    label: str
+
+    BARFUESSERBRUECKE = (780110, "Barfüßerbrücke")
+    MORITZPLATZ = (780230, "Moritzplatz")
+    HALLE_SAALE = (8010159, "Halle (Saale)")
+
+    def __new__(cls, station_id: int, label: str) -> Station:
+        obj = object.__new__(cls)
+        obj._value_ = station_id
+        obj.label = label
+        return obj
 
 
 class Departure(NamedTuple):
@@ -29,7 +37,7 @@ class Departure(NamedTuple):
 
 
 DEPARTURES_URL: Final[str] = (
-    f"https://v6.db.transport.rest/stops/{Station.HALLE_SAALE}/departures"
+    f"https://v6.db.transport.rest/stops/{Station.MORITZPLATZ.value}/departures"
 )
 
 
