@@ -1,8 +1,8 @@
 """TUI application for displaying real-time public transport departures."""
 
 from datetime import UTC, datetime
-from enum import Enum
-from typing import Any, NamedTuple
+from pathlib import Path
+from typing import Any, Final, NamedTuple
 
 import httpx
 from textual import on, work
@@ -10,20 +10,25 @@ from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header, Select
 
 
-class Station(Enum):
-    """Mapping of station names to their transport API IDs."""
+class Station(NamedTuple):
+    """A public transport station with display name and API ID."""
 
-    label: str
+    name: str
+    station_id: int
 
-    BARFUESSERBRUECKE = (780110, "Barfüßerbrücke")
-    MORITZPLATZ = (780230, "Moritzplatz")
-    HALLE_SAALE = (8010159, "Halle (Saale)")
 
-    def __new__(cls, station_id: int, label: str) -> Station:
-        obj = object.__new__(cls)
-        obj._value_ = station_id
-        obj.label = label
-        return obj
+def parse_stations() -> list[Station]:
+    """Parse stations from 'stations.txt' and return them sorted by name."""
+    file_path: Path = Path(__file__).parent / "stations.txt"
+    with open(file_path, encoding="UTF-8") as f:
+        lines = f.readlines()
+
+        stations = []
+        for line in lines:
+            name, station_id = line.split(";", maxsplit=1)
+            stations.append(Station(name, int(station_id)))
+        stations.sort()
+        return stations
 
 
 class Departure(NamedTuple):
@@ -36,20 +41,25 @@ class Departure(NamedTuple):
     delay: int
 
 
+STATIONS: Final[list[Station]] = parse_stations()
+
+
 class SwaptDisplay(App):
     """Main TUI app that displays a live departure table."""
 
     def __init__(self) -> None:
         super().__init__()
-        self.station = Station.BARFUESSERBRUECKE
+        self.station: Station = STATIONS[0]
         self._client: httpx.AsyncClient = httpx.AsyncClient(timeout=10)
-        self.title = self.station.label
+        self.title = "Swapt Display"
 
     def compose(self) -> ComposeResult:
         """Compose the layout with header, footer, and data table."""
         yield Header()
         yield Select(
-            ((station.label, station) for station in Station), value=self.station
+            ((station.name, station) for station in STATIONS),
+            allow_blank=False,
+            type_to_search=True,
         )
         yield DataTable()
         yield Footer()
@@ -62,9 +72,8 @@ class SwaptDisplay(App):
         table: DataTable = self.query_one(DataTable)
         table.loading = True
 
-        self.station = Station(event.value)  # type: ignore[arg-type, call-arg]
+        self.station = event.value  # type: ignore[arg-type, call-arg, assignment]
         self.update_table()
-        self.title = self.station.label
 
         table.loading = False
 
@@ -81,7 +90,7 @@ class SwaptDisplay(App):
         )
 
         departures: list[Departure] | None = await get_departures(
-            self._client, self.station.value
+            self._client, self.station.station_id
         )
         if departures:
             table.add_rows(departures)
@@ -98,7 +107,7 @@ class SwaptDisplay(App):
         """Fetch fresh data and update all table cells."""
         table: DataTable = self.query_one(DataTable)
         departures: list[Departure] | None = await get_departures(
-            self._client, self.station.value
+            self._client, self.station.station_id
         )
         if not departures:
             return

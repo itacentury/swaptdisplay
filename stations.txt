@@ -1,0 +1,315 @@
+Augsburg Hbf; 8000013
+Augsburg-Oberhausen; 8000662
+Augsburg Haunstetterstraße; 8000658
+Augsburg-Hochzoll; 8000661
+Augsburg Messe; 8000659
+Augsburg-Inningen; 8003079
+Augsburg Morellstr.; 8000660
+Friedberg(Augsburg); 8002099
+Hauptbahnhof; 781967
+Oberhausen Bahnhof; 781431
+Haunstetter Straße Bahnhof; 780251
+Hochzoll Bahnhof; 780183
+Messe DB; 782032
+Auerstraße; 780105
+Aindlinger Straße; 780092
+Albrecht-Dürer-Straße; 780263
+Alpenstraße; 781531
+Alter Ostfriedhof; 780096
+Am Alten Hessenbach; 780842
+Am Eulenhorst; 780097
+Am Grünland; 780098
+Am Roggenfeld; 780100
+Am Wachtelschlag; 780101
+Afrabrücke; 780289
+Alpenhof; 780093
+Am Eiskanal; 780301
+Am Mittleren Moos; 780099
+Ablaßweg; 373730
+Königsplatz; 781971
+Moritzplatz; 780230
+Rotes Tor; 781472
+Th.-Heuss-Platz/IHK; 780290
+Göggingen Hessing-Kliniken; 780636
+Göggingen Rathaus; 780635
+Haunstetten Nord; 781999
+Inninger Straße P+R; 203490
+Oberhausen Nord P+R; 780123
+Pfersee; 780245
+Schwaben Center; 780095
+Stadtbergen Augsburg West P+R; 782049
+Göggingen Bergstraße; 780622
+Barfüßerbrücke/Brecht-Haus; 780110
+Berliner Allee; 780112
+Bukowina-Institut/PCI; 780577
+Burgfrieden; 780125
+Bärenwirt/DRvS; 781958
+Eberlestraße; 780142
+Frohsinnstraße; 780157
+Fuggerei; 780189
+Göggingen Maria Stern; 780630
+Haunstetten Hofackerstraße; 780611
+Heimgarten; 780173
+Herz-Jesu-Kirche; 780106
+Hochschule; 780788
+Hochzoll Mitte; 780181
+Jakobertor; 780188
+Kongress am Park; 780200
+Kriegshaber; 780201
+Lechhausen Neuer Ostfriedhof; 780211
+Lechhausen Schlößle; 781973
+Luitpoldbrücke; 780609
+Neusässer Straße; 782047
+Pilgerhausstraße; 780248
+Polizeipräsidium; 780297
+Rosenaustraße; 780257
+Rudolf-Diesel-Gymn.; 780421
+Rudolf-Diesel-Gymnasium; 780354
+Schleiermacherstraße; 780264
+Senkelbach; 780270
+Staatstheater; 780283
+Stenglinstraße; 782051
+Textilmuseum; 780102
+Ulrichsbrücke; 781475
+Uniklinik BKH; 780511
+Margaret; 780222
+Ulrichsplatz; 780298
+Rathausplatz; 780255
+Schertlinstraße; 780261
+Wertachbrücke; 780308
+Bergheim; 780335
+Bergheim Baggersee; 780336
+Bergheim Jakob-Krause-Straße; 780337
+Bergheim Kirche; 780340
+Bergheim Neubergheim Ost; 780338
+Bergheim Neubergheim West; 780339
+Bergheim Nord; 780341
+Bergheim Süd; 780342
+Chemnitzer Straße; 780131
+Goethestraße; 780159
+Göggingen Am Bühl; 780620
+Göggingen Brandweg; 780623
+Göggingen G.-Stresemann-Straße; 780003
+Göggingen Lindauer Straße; 780629
+Göggingen Mühlstraße; 780632
+Göggingen Olof-Palme-Straße; 781512
+Göggingen Radaustraße; 780634
+Göggingen Welfenstraße; 780638
+Haunstetten Adelheidstraße; 780658
+Haunstetten Roggenstraße; 780682
+Haunstetten Via-Claudia-Straße; 780689
+Inningen Ferrozell; 780774
+Inningen Kohlstattsiedlung; 780772
+Inningen Ost; 780779
+Inningen Tiberiusstraße; 780777
+Inningen Waage; 780780
+Inningen Wasserturmstraße; 780781
+Inningen West; 780782
+Pfersee Süd; 780246
+Preßburger Straße; 780972
+Zoo/Bot. Garten; 780313
+Bgm.-Ackermann-Straße; 780115
+Bismarckbrücke; 780117
+Blaue Kappe; 780118
+Brixener Straße; 780121
+Brunnenstraße; 782025
+Bärenbergl; 780172
+Bärenkeller Nord; 780126
+Bärenkeller Schule; 780128
+Bärenkeller Süd; 780129
+Christian-Dierig-Haus; 780193
+City-Galerie/VHS; 782026
+Dayton Ring; 780133
+Derchinger Straße; 780134
+Dieselbrücke; 780136
+Donaustraße; 781383
+Dr.-Schmelzing-Straße; 780140
+Eibseestraße; 780397
+Eichleitnerstraße; 782027
+Eppaner Straße; 780143
+Falkenweg; 780145
+Fichtelbachstraße; 780147
+Firnhaberau; 780148
+Flandernstraße; 780150
+Flughafen Abzw.; 780152
+Forggenseestraße; 780153
+Fraunhoferstraße; 780154
+Friedr.-Deffner-Straße; 780383
+Fritz-Koelle-Straße; 780155
+Gaswerk; 781514
+Gieseckestraße; 780158
+Glaspalast; 780277
+Goldregenweg; 780160
+Göggingen Bergiusstraße; 780621
+Göggingen Schwabenweg; 780637
+Göggingen Widdersteinweg; 780006
+Haindl; 780164
+Hammerschmiede; 780166
+Hammerschmiede P+R; 797013
+Hammerschmiede Süd; 780167
+Hammerschmiedweg; 780168
+Hans-Adlhoch-Straße; 780169
+Haunstetten Auf dem Nol; 780659
+Haunstetten Dr.-Troeltsch-Straße, Augsburg (Bayern; 780662
+Haunstetten Flachsstraße; 780663
+Haunstetten Georg-Käß-Platz; 780664
+Haunstetten Hotel Gregor; 780667
+Haunstetten Jägerhaus; 780670
+Haunstetten Klinikum Süd; 780672
+Haunstetten Lavendelstraße; 780673
+Haunstetten Leharstraße; 780674
+Haunstetten Marienburger Straße; 780676
+Haunstetten Offenbach Karree; 781995
+Haunstetten Olympiastraße; 780680
+Haunstetten Rentmeisterstraße; 781392
+Haunstetten Seniorenwohnheim; 780683
+Haunstetten Sportplatzstraße; 781382
+Haunstetten Süd; 780690
+Haunstetten Taubenstraße; 780688
+Hennchstraße; 780175
+Herrenbach Schule; 780176
+Herzogstandstraße; 780394
+Hessenbachstraße; 780178
+Hochfeld; 780179
+Hochfeldstraße; 780180
+Hochzoll Kuhsee; 780182
+Hochzoll Süd; 781495
+Höfatsstraße; 780186
+Inningen Nord; 780778
+Innsbrucker Straße; 780187
+Josefinum; 780236
+Kammgarn; 780190
+Karlstraße; 780191
+Kinderklinik; 780192
+Kirschenweg; 780194
+Klausstraße; 780195
+Kleesiedlung; 780196
+Klinik Vincentinum; 780171
+Kolbergstraße; 780198
+Kollmannstraße; 780199
+Kriegshaberstraße; 780202
+Kulturhaus abraxas; 780239
+Kurt-Schumacher-Straße; 780204
+Landvogtstraße; 780208
+Lange Gewanne; 780209
+Lechhausen Industriegebiet; 780210
+Linke Brandstraße; 780215
+Localbahn; 780216
+Ludwigshafener Straße; 780217
+Lukassiedlung; 780218
+Magdeburger Straße; 780221
+MAN; 780220
+Markgrafenstraße; 780223
+Medizincampus; 304570
+Memminger Straße; 780226
+Messe Nord; 782033
+Messe Süd; 780227
+Messezentrum; 781934
+Mittelberger Straße; 780228
+Murnauer Weg; 780232
+Münchner Straße; 780233
+Neuschwansteinstraße; 780436
+Nordfriedhof; 780235
+Oberländer Straße; 780238
+Osram; 780000
+Ottostraße; 780241
+Prinz-Karl-Viertel; 782035
+Prinzregentenstraße; 780250
+Proviantbachquartier; 780252
+Radetzkystraße; 782043
+Reichenberger Straße; 780256
+Reinöhlstraße; 781395
+Schackstraße; 780266
+Schillcafe; 780262
+Siedlerweg; 780299
+Spickel; 780278
+St.-Anton-Siedlung; 780281
+St.-Lukas-Straße; 780280
+Steinerne Furt; 780285
+Stephingerberg; 780286
+Sterzinger Straße; 780287
+Stuttgarter Straße; 781489
+Stätzlinger Straße; 782044
+Tannheimer Straße; 780288
+Th.-Wiedemann-Straße; 780291
+Toblacher Straße; 780292
+Trettachstraße; 780293
+Täfertinger Weg; 780294
+Uhlandstraße; 780295
+Volkhartstraße; 780303
+Weißenseestraße; 780306
+Wertinger Straße; 780309
+Windprechtstraße; 780271
+Zusamstraße; 780314
+Curt-Frenzel-Stadion; 780122
+Eschenhof; 782028
+Gärtnerstraße; 780162
+Kulturstraße; 780203
+Wilhelm-Hauff-Straße; 780224
+Zollernstraße; 782036
+BBW/Inst. für Physik; 781455
+BBW/Institut für Physik; 780113
+Beim Dürren Ast; 780502
+Berufsschule; 780114
+Bgm.-Bohl-Straße; 780116
+Curtiusstraße; 781537
+Dom/Stadtwerke; 780284
+Drentwettstraße; 780141
+Fachoberschule; 780565
+Fischertor; 780149
+Göggingen Klausenberg; 780628
+Haunstetten Baugenossenschaft; 780660
+Haunstetten Bischofsackerweg; 780594
+Haunstetten Hötzelstraße; 780678
+Haunstetten Kopernikusstraße; 780601
+Innovationspark/LfU; 780848
+Klinkertor; 780197
+KUKA/Partnachweg; 780242
+Mozarthaus/Kolping; 780231
+Plärrer P+R; 780249
+Schärtlstraße; 780268
+Sportanlage Süd P+R; 780275
+St. Thaddäus; 780279
+Universität; 780591
+Volkssiedlung; 780504
+Von-Parseval-Straße; 780530
+Westfriedhof; 780310
+Göggingen; 780624
+Haunstetten Brahmsstraße; 201640
+Haunstetten Südwest; 203182
+General-Cramer-Weg; 797017
+Göggingen Gabelsberger Straße; 780820
+Halle 116/Pröllstraße; 797015
+Benedikt-Kern-Weg; 101485
+Bärenkeller Ost; 780127
+Diakonissenhaus; 780135
+Endorferstraße; 797016
+Kernriedstraße; 782029
+Kobelweg; 782030
+Medienzentrum; 780225
+Schwabhof; 781166
+Seniorenzentrum Servatius; 780103
+Speckbacherstraße; 372058
+Umweltzentrum; 782024
+Fußball-Arena; 780005
+Haunstetten Hirsestraße; 780665
+Haunstetten Joh.-Strauß-Straße; 780669
+Schwaben Center West; 780267
+Göggingen Seniorenheim; 780419
+Inningen Fuchssiedlung; 780163
+Radegundis; 780253
+Schillerstraße; 370738
+Siebenbrunn; 780272
+Siebenbrunn Schule; 780273
+Siebenbrunn Süd; 780274
+Wellenburg; 780307
+Bleriotstraße; 780120
+Fa. Karstadt; 780085
+Gymnasium St. Anna; 781519
+Göggingen Isegrimstraße; 780627
+Haunstetten Inninger Straße P+R; 780177
+Haunstetten West P+R; 781996
+Mühlmahdweg; 780086
+Salomon-Idler-Straße; 780259
+Syrisch-Orth. Kirche; 780441
+Haunstetten Bgm.-Rieger-Straße; 780661
