@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
-from typing import Any, Final
+from datetime import datetime
+from typing import Any, Final, NamedTuple
 
 import dateparser
 import httpx
@@ -12,6 +12,14 @@ MORITZPLATZ: Final[int] = 780230
 HALLE_SAALE: Final[int] = 8010159
 
 
+class Departure(NamedTuple):
+    line: str
+    direction: str
+    scheduled: str
+    expected: str
+    delay: int
+
+
 class SwaptDisplay(App):
     def compose(self) -> ComposeResult:
         yield Header()
@@ -21,14 +29,14 @@ class SwaptDisplay(App):
     async def on_mount(self) -> None:
         table: DataTable = self.query_one(DataTable)
         table.add_columns(
-            ("Linie", "linie_col"),
-            ("Ziel", "ziel_col"),
-            ("Soll", "soll_col"),
-            ("Ist", "ist_col"),
-            ("Verspätung", "verspaetung_col"),
+            ("Linie", "line_col"),
+            ("Ziel", "dest_col"),
+            ("Soll", "target_col"),
+            ("Ist", "actual_col"),
+            ("Verspätung", "delay_col"),
         )
 
-        data: list[tuple[str, str, str, str, int]] | None = await get_data()
+        data: list[Departure] | None = await get_data()
         if data is None:
             return
 
@@ -39,20 +47,21 @@ class SwaptDisplay(App):
     @work(exclusive=True)
     async def update_table(self) -> None:
         table: DataTable = self.query_one(DataTable)
-        data: list[tuple[str, str, str, str, int]] | None = await get_data()
+        data: list[Departure] | None = await get_data()
         if data is None:
+            self.notify("Error updating table", severity="error")
             return
 
         for i, row in enumerate(table.rows):
             for j, col in enumerate(
-                ["linie_col", "ziel_col", "soll_col", "ist_col", "verspaetung_col"]
+                ["line_col", "dest_col", "target_col", "actual_col", "delay_col"]
             ):
                 table.update_cell(row, col, data[i][j])
 
-        self.notify("Updated table!")
+        self.notify("Updated table!", severity="information")
 
 
-async def get_data() -> list[tuple[str, str, str, str, int]] | None:
+async def get_data() -> list[Departure] | None:
     url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
 
     async with httpx.AsyncClient() as client:
@@ -61,17 +70,17 @@ async def get_data() -> list[tuple[str, str, str, str, int]] | None:
             return None
 
         data: Any = response.json()
-        formatted_data: list[tuple[str, str, str, str, int]] | None = format_data(data)
+        formatted_data: list[Departure] | None = format_data(data)
 
         return formatted_data
 
 
-def format_data(data: Any) -> list[tuple[str, str, str, str, int]] | None:
+def format_data(data: Any) -> list[Departure] | None:
     if not data:
         return None
 
     now: datetime = datetime.now()
-    processed_data: list[tuple] = []
+    processed_data: list[Departure] = []
     for entry in data["departures"]:
         try:
             when: datetime | None = dateparser.parse(entry["when"])
@@ -87,22 +96,20 @@ def format_data(data: Any) -> list[tuple[str, str, str, str, int]] | None:
         name: str = entry["line"]["name"]
         direction: str = entry["direction"]
         try:
-            plannedWhen: datetime | None = dateparser.parse(entry["plannedWhen"])
+            planned_when: datetime | None = dateparser.parse(entry["plannedWhen"])
         except TypeError:
             continue
 
-        if plannedWhen is None:
+        if planned_when is None:
             continue
 
-        delay: timedelta = when - plannedWhen
+        scheduled: str = planned_when.time().isoformat("minutes")
+        expected: str = when.time().isoformat("minutes")
+        delay: int = int((when - planned_when).total_seconds() // 60)
 
-        plannedWhen_formatted: str = plannedWhen.time().isoformat("minutes")
-        when_formatted: str = when.time().isoformat("minutes")
-        delay_formatted: int = int(delay.total_seconds() // 60)
+        departure: Departure = Departure(name, direction, scheduled, expected, delay)
 
-        processed_data.append(
-            (name, direction, plannedWhen_formatted, when_formatted, delay_formatted)
-        )
+        processed_data.append(departure)
 
     return processed_data
 
