@@ -1,45 +1,14 @@
 """TUI application for displaying real-time public transport departures."""
 
-from datetime import UTC, datetime
-from pathlib import Path
-from typing import Any, Final, NamedTuple
+from typing import Final
 
 import httpx
 from textual import on, work
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header, Select
 
-
-class Station(NamedTuple):
-    """A public transport station with display name and API ID."""
-
-    name: str
-    station_id: int
-
-
-def parse_stations() -> list[Station]:
-    """Parse stations from 'stations.txt' and return them sorted by name."""
-    file_path: Path = Path(__file__).parent / "stations.txt"
-    with open(file_path, encoding="UTF-8") as f:
-        lines: list[str] = f.readlines()
-
-    stations: list[Station] = []
-    for line in lines:
-        name, station_id = line.split(";", maxsplit=1)
-        stations.append(Station(name, int(station_id)))
-    stations.sort()
-    return stations
-
-
-class Departure(NamedTuple):
-    """Represents a single public transport departure."""
-
-    line: str
-    direction: str
-    scheduled: str
-    expected: str
-    delay: int
-
+from api import get_departures
+from models import Departure, Station, parse_stations
 
 STATIONS: Final[list[Station]] = parse_stations()
 
@@ -113,64 +82,6 @@ class SwaptDisplay(App):
         table.clear()
         table.add_rows(departures)
         table.loading = False
-
-
-async def get_departures(
-    client: httpx.AsyncClient, station_id: int
-) -> list[Departure] | None:
-    """Fetch departures from the transport API. Returns None on failure."""
-    url: str = f"https://v6.db.transport.rest/stops/{station_id}/departures"
-
-    try:
-        response: httpx.Response = await client.get(url)
-        response.raise_for_status()
-        return extract_departures(response.json())
-    except httpx.HTTPError, ValueError:
-        return None
-
-
-def parse_datetime(datetime_string: str) -> datetime | None:
-    """Parse an ISO 8601 datetime string. Returns None if parsing fails."""
-    if not isinstance(datetime_string, str):
-        return None
-
-    try:
-        return datetime.fromisoformat(datetime_string)
-    except ValueError:
-        return None
-
-
-def extract_departures(data: Any) -> list[Departure]:
-    """Parse API response into a list of future departures."""
-    if not data:
-        return []
-
-    departures: list[Departure] = []
-    now: float = datetime.now(tz=UTC).timestamp()
-    for entry in data["departures"]:
-        try:
-            when: datetime | None = parse_datetime(entry["when"])
-            if when is None:
-                continue
-
-            if when.timestamp() < now:
-                continue
-
-            line_name: str = entry["line"]["name"]
-            direction: str = str(entry["direction"]).removesuffix(", Augsburg (Bayern)")
-            planned_when: datetime | None = parse_datetime(entry["plannedWhen"])
-            if planned_when is None:
-                continue
-
-            scheduled: str = planned_when.time().isoformat("minutes")
-            expected: str = when.time().isoformat("minutes")
-            delay: int = int((when - planned_when).total_seconds() // 60)
-
-            departures.append(Departure(line_name, direction, scheduled, expected, delay))
-        except KeyError:
-            continue
-
-    return departures
 
 
 def main() -> None:
