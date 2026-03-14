@@ -12,6 +12,10 @@ BARFUESSERBRUECKE: Final[int] = 780110
 MORITZPLATZ: Final[int] = 780230
 HALLE_SAALE: Final[int] = 8010159
 
+DEPARTURES_URL: Final[str] = (
+    f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
+)
+
 
 class Departure(NamedTuple):
     """Represents a single public transport departure."""
@@ -25,6 +29,10 @@ class Departure(NamedTuple):
 
 class SwaptDisplay(App):
     """Main TUI app that displays a live departure table."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._client: httpx.AsyncClient = httpx.AsyncClient(timeout=10)
 
     def compose(self) -> ComposeResult:
         """Compose the layout with header, footer, and data table."""
@@ -43,7 +51,7 @@ class SwaptDisplay(App):
             ("Verspätung", "delay_col"),
         )
 
-        data: list[Departure] | None = await get_data()
+        data: list[Departure] | None = await get_departures(self._client)
         if data is None:
             return
 
@@ -51,11 +59,15 @@ class SwaptDisplay(App):
 
         self.set_interval(30, self.update_table)
 
+    async def on_unmount(self) -> None:
+        """Close the HTTP client on app shutdown."""
+        await self._client.aclose()
+
     @work(exclusive=True)
     async def update_table(self) -> None:
         """Fetch fresh data and update all table cells."""
         table: DataTable = self.query_one(DataTable)
-        departures: list[Departure] | None = await get_data()
+        departures: list[Departure] | None = await get_departures(self._client)
         if not departures:
             self.notify("Error updating table", severity="error")
             return
@@ -69,21 +81,14 @@ class SwaptDisplay(App):
         self.notify("Updated table!", severity="information")
 
 
-async def get_data() -> list[Departure] | None:
+async def get_departures(client: httpx.AsyncClient) -> list[Departure] | None:
     """Fetch departures from the transport API. Returns None on failure."""
-    url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
-
-    async with httpx.AsyncClient(timeout=15) as client:
-        try:
-            response: httpx.Response = await client.get(url)
-            if response.status_code != 200:
-                return None
-
-            data: Any = response.json()
-            departures: list[Departure] = extract_departures(data)
-            return departures
-        except httpx.ReadTimeout:
-            return None
+    try:
+        response: httpx.Response = await client.get(DEPARTURES_URL)
+        response.raise_for_status()
+        return extract_departures(response.json())
+    except httpx.HTTPError:
+        return None
 
 
 def parse_datetime(datetime_string: str) -> datetime | None:
