@@ -19,7 +19,6 @@
             "editor.formatOnPaste": true,
             "editor.defaultFormatter": "tamasfe.even-better-toml"
         },
-        "python.defaultInterpreterPath": ".venv/bin/python",
         "mypy-type-checker.importStrategy": "fromEnvironment"
     },
     "extensions": {
