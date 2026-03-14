@@ -21,9 +21,9 @@ def parse_stations() -> list[Station]:
     """Parse stations from 'stations.txt' and return them sorted by name."""
     file_path: Path = Path(__file__).parent / "stations.txt"
     with open(file_path, encoding="UTF-8") as f:
-        lines = f.readlines()
+        lines: list[str] = f.readlines()
 
-        stations = []
+        stations: list[Station] = []
         for line in lines:
             name, station_id = line.split(";", maxsplit=1)
             stations.append(Station(name, int(station_id)))
@@ -49,7 +49,7 @@ class SwaptDisplay(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self.station: Station = STATIONS[0]
+        self._station: Station = STATIONS[0]
         self._client: httpx.AsyncClient = httpx.AsyncClient(timeout=10)
         self.title = "Swapt Display"
 
@@ -72,7 +72,7 @@ class SwaptDisplay(App):
         table: DataTable = self.query_one(DataTable)
         table.loading = True
 
-        self.station = event.value  # type: ignore[arg-type, call-arg, assignment]
+        self._station = event.value  # type: ignore[arg-type, call-arg, assignment]
         self.update_table()
 
         table.loading = False
@@ -90,7 +90,7 @@ class SwaptDisplay(App):
         )
 
         departures: list[Departure] | None = await get_departures(
-            self._client, self.station.station_id
+            self._client, self._station.station_id
         )
         if departures:
             table.add_rows(departures)
@@ -107,7 +107,7 @@ class SwaptDisplay(App):
         """Fetch fresh data and update all table cells."""
         table: DataTable = self.query_one(DataTable)
         departures: list[Departure] | None = await get_departures(
-            self._client, self.station.station_id
+            self._client, self._station.station_id
         )
         if not departures:
             return
