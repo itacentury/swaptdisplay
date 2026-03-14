@@ -1,6 +1,7 @@
 """TUI application for displaying real-time public transport departures."""
 
-from datetime import datetime
+from datetime import UTC, datetime
+from enum import IntEnum
 from typing import Any, Final, NamedTuple
 
 import httpx
@@ -8,13 +9,13 @@ from textual import work
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header
 
-BARFUESSERBRUECKE: Final[int] = 780110
-MORITZPLATZ: Final[int] = 780230
-HALLE_SAALE: Final[int] = 8010159
 
-DEPARTURES_URL: Final[str] = (
-    f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
-)
+class Station(IntEnum):
+    """Mapping of station names to their transport API IDs."""
+
+    BARFUESSERBRUECKE = 780110
+    MORITZPLATZ = 780230
+    HALLE_SAALE = 8010159
 
 
 class Departure(NamedTuple):
@@ -25,6 +26,11 @@ class Departure(NamedTuple):
     scheduled: str
     expected: str
     delay: int
+
+
+DEPARTURES_URL: Final[str] = (
+    f"https://v6.db.transport.rest/stops/{Station.HALLE_SAALE}/departures"
+)
 
 
 class SwaptDisplay(App):
@@ -51,13 +57,11 @@ class SwaptDisplay(App):
             ("Verspätung", "delay_col"),
         )
 
-        data: list[Departure] | None = await get_departures(self._client)
-        if data is None:
-            return
+        departures: list[Departure] | None = await get_departures(self._client)
+        if departures:
+            table.add_rows(departures)
 
-        table.add_rows(data)
-
-        self.set_interval(30, self.update_table)
+        self.set_interval(10, self.update_table)
 
     async def on_unmount(self) -> None:
         """Close the HTTP client on app shutdown."""
@@ -69,16 +73,10 @@ class SwaptDisplay(App):
         table: DataTable = self.query_one(DataTable)
         departures: list[Departure] | None = await get_departures(self._client)
         if not departures:
-            self.notify("Error updating table", severity="error")
             return
 
-        for i, row in enumerate(table.rows):
-            for j, col in enumerate(
-                ["line_col", "dest_col", "target_col", "actual_col", "delay_col"]
-            ):
-                table.update_cell(row, col, departures[i][j])
-
-        self.notify("Updated table!", severity="information")
+        table.clear()
+        table.add_rows(departures)
 
 
 async def get_departures(client: httpx.AsyncClient) -> list[Departure] | None:
@@ -87,12 +85,15 @@ async def get_departures(client: httpx.AsyncClient) -> list[Departure] | None:
         response: httpx.Response = await client.get(DEPARTURES_URL)
         response.raise_for_status()
         return extract_departures(response.json())
-    except httpx.HTTPError:
+    except httpx.HTTPError, ValueError:
         return None
 
 
 def parse_datetime(datetime_string: str) -> datetime | None:
     """Parse an ISO 8601 datetime string. Returns None if parsing fails."""
+    if not isinstance(datetime_string, str):
+        return None
+
     try:
         return datetime.fromisoformat(datetime_string)
     except ValueError:
@@ -105,7 +106,7 @@ def extract_departures(data: Any) -> list[Departure]:
         return []
 
     departures: list[Departure] = []
-    now: float = datetime.now().timestamp()
+    now: float = datetime.now(tz=UTC).timestamp()
     for entry in data["departures"]:
         when: datetime | None = parse_datetime(entry["when"])
         if when is None:
@@ -115,7 +116,7 @@ def extract_departures(data: Any) -> list[Departure]:
             continue
 
         line_name: str = entry["line"]["name"]
-        direction: str = entry["direction"]
+        direction: str = str(entry["direction"]).removesuffix(", Augsburg (Bayern)")
         planned_when: datetime | None = parse_datetime(entry["plannedWhen"])
         if planned_when is None:
             continue
