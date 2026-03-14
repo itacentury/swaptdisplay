@@ -64,15 +64,18 @@ class SwaptDisplay(App):
 async def get_data() -> list[Departure] | None:
     url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
 
-    async with httpx.AsyncClient() as client:
-        response: httpx.Response = await client.get(url)
-        if response.status_code != 200:
+    async with httpx.AsyncClient(timeout=15) as client:
+        try:
+            response: httpx.Response = await client.get(url)
+            if response.status_code != 200:
+                return None
+
+            data: Any = response.json()
+            formatted_data: list[Departure] | None = format_data(data)
+
+            return formatted_data
+        except httpx.ReadTimeout:
             return None
-
-        data: Any = response.json()
-        formatted_data: list[Departure] | None = format_data(data)
-
-        return formatted_data
 
 
 def format_data(data: Any) -> list[Departure] | None:
