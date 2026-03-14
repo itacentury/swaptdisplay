@@ -23,12 +23,12 @@ def parse_stations() -> list[Station]:
     with open(file_path, encoding="UTF-8") as f:
         lines: list[str] = f.readlines()
 
-        stations: list[Station] = []
-        for line in lines:
-            name, station_id = line.split(";", maxsplit=1)
-            stations.append(Station(name, int(station_id)))
-        stations.sort()
-        return stations
+    stations: list[Station] = []
+    for line in lines:
+        name, station_id = line.split(";", maxsplit=1)
+        stations.append(Station(name, int(station_id)))
+    stations.sort()
+    return stations
 
 
 class Departure(NamedTuple):
@@ -75,8 +75,6 @@ class SwaptDisplay(App):
         self._station = event.value  # type: ignore[arg-type, call-arg, assignment]
         self.update_table()
 
-        table.loading = False
-
     async def on_mount(self) -> None:
         """Initialize the table columns and load initial departure data."""
         table: DataTable = self.query_one(DataTable)
@@ -114,6 +112,7 @@ class SwaptDisplay(App):
 
         table.clear()
         table.add_rows(departures)
+        table.loading = False
 
 
 async def get_departures(
@@ -149,24 +148,27 @@ def extract_departures(data: Any) -> list[Departure]:
     departures: list[Departure] = []
     now: float = datetime.now(tz=UTC).timestamp()
     for entry in data["departures"]:
-        when: datetime | None = parse_datetime(entry["when"])
-        if when is None:
+        try:
+            when: datetime | None = parse_datetime(entry["when"])
+            if when is None:
+                continue
+
+            if when.timestamp() < now:
+                continue
+
+            line_name: str = entry["line"]["name"]
+            direction: str = str(entry["direction"]).removesuffix(", Augsburg (Bayern)")
+            planned_when: datetime | None = parse_datetime(entry["plannedWhen"])
+            if planned_when is None:
+                continue
+
+            scheduled: str = planned_when.time().isoformat("minutes")
+            expected: str = when.time().isoformat("minutes")
+            delay: int = int((when - planned_when).total_seconds() // 60)
+
+            departures.append(Departure(line_name, direction, scheduled, expected, delay))
+        except KeyError:
             continue
-
-        if when.timestamp() < now:
-            continue
-
-        line_name: str = entry["line"]["name"]
-        direction: str = str(entry["direction"]).removesuffix(", Augsburg (Bayern)")
-        planned_when: datetime | None = parse_datetime(entry["plannedWhen"])
-        if planned_when is None:
-            continue
-
-        scheduled: str = planned_when.time().isoformat("minutes")
-        expected: str = when.time().isoformat("minutes")
-        delay: int = int((when - planned_when).total_seconds() // 60)
-
-        departures.append(Departure(line_name, direction, scheduled, expected, delay))
 
     return departures
 

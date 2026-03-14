@@ -7,7 +7,7 @@ name = "swaptdisplay"
 version = "0.1.0"
 requires-python = ">=3.14"
 license = "GPL-3.0-or-later"
-dependencies = ["dateparser>=1.3.0", "httpx>=0.28.1", "textual>=8.1.1"]
+dependencies = ["httpx>=0.28.1", "textual>=8.1.1"]
 
 [project.scripts]
 swaptdisplay = "main:main"
