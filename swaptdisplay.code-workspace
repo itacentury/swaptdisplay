@@ -1,0 +1,68 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "task.autoDetect": "off",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "[python]": {
+            "editor.defaultFormatter": "charliermarsh.ruff",
+            "editor.codeActionsOnSave": {
+                "source.organizeImports.ruff": "explicit"
+            }
+        },
+        "[toml]": {
+            "editor.formatOnSave": true,
+            "editor.formatOnPaste": true,
+            "editor.defaultFormatter": "tamasfe.even-better-toml"
+        },
+        "python.defaultInterpreterPath": ".venv/bin/python",
+        "mypy-type-checker.importStrategy": "fromEnvironment"
+    },
+    "extensions": {
+        "recommendations": [
+            "charliermarsh.ruff",
+            "ms-python.python",
+            "ms-python.mypy-type-checker",
+            "tamasfe.even-better-toml"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build",
+                "type": "shell",
+                "command": "uv build",
+                "group": "build",
+            },
+            {
+                "label": "Run",
+                "type": "shell",
+                "command": "uv run swaptdisplay",
+                "group": "build",
+            },
+            {
+                "label": "Sync",
+                "type": "shell",
+                "command": "uv sync",
+                "group": "build",
+            },
+            {
+                "label": "Check",
+                "type": "shell",
+                "command": "uv run ruff format . && uv run ruff check . && uv run mypy main.py",
+                "group": "build",
+            },
+            {
+                "label": "Textual Console",
+                "type": "shell",
+                "command": "uv run textual console",
+                "group": "build",
+            }
+        ]
+    }
+}
