@@ -2,12 +2,12 @@
 
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Final, NamedTuple
+from typing import Any, NamedTuple
 
 import httpx
-from textual import work
+from textual import on, work
 from textual.app import App, ComposeResult
-from textual.widgets import DataTable, Footer, Header
+from textual.widgets import DataTable, Footer, Header, Select
 
 
 class Station(Enum):
@@ -36,27 +36,42 @@ class Departure(NamedTuple):
     delay: int
 
 
-DEPARTURES_URL: Final[str] = (
-    f"https://v6.db.transport.rest/stops/{Station.MORITZPLATZ.value}/departures"
-)
-
-
 class SwaptDisplay(App):
     """Main TUI app that displays a live departure table."""
 
     def __init__(self) -> None:
         super().__init__()
+        self.station = Station.BARFUESSERBRUECKE
         self._client: httpx.AsyncClient = httpx.AsyncClient(timeout=10)
+        self.title = self.station.label
 
     def compose(self) -> ComposeResult:
         """Compose the layout with header, footer, and data table."""
         yield Header()
-        yield Footer()
+        yield Select(
+            ((station.label, station) for station in Station), value=self.station
+        )
         yield DataTable()
+        yield Footer()
+
+    @on(Select.Changed)
+    def select_changed(self, event: Select.Changed) -> None:
+        if event.value is Select.BLANK:
+            return
+
+        table: DataTable = self.query_one(DataTable)
+        table.loading = True
+
+        self.station = Station(event.value)  # type: ignore[arg-type, call-arg]
+        self.update_table()
+        self.title = self.station.label
+
+        table.loading = False
 
     async def on_mount(self) -> None:
         """Initialize the table columns and load initial departure data."""
         table: DataTable = self.query_one(DataTable)
+        table.loading = True
         table.add_columns(
             ("Linie", "line_col"),
             ("Ziel", "dest_col"),
@@ -65,9 +80,12 @@ class SwaptDisplay(App):
             ("Verspätung", "delay_col"),
         )
 
-        departures: list[Departure] | None = await get_departures(self._client)
+        departures: list[Departure] | None = await get_departures(
+            self._client, self.station.value
+        )
         if departures:
             table.add_rows(departures)
+        table.loading = False
 
         self.set_interval(10, self.update_table)
 
@@ -79,7 +97,9 @@ class SwaptDisplay(App):
     async def update_table(self) -> None:
         """Fetch fresh data and update all table cells."""
         table: DataTable = self.query_one(DataTable)
-        departures: list[Departure] | None = await get_departures(self._client)
+        departures: list[Departure] | None = await get_departures(
+            self._client, self.station.value
+        )
         if not departures:
             return
 
@@ -87,10 +107,14 @@ class SwaptDisplay(App):
         table.add_rows(departures)
 
 
-async def get_departures(client: httpx.AsyncClient) -> list[Departure] | None:
+async def get_departures(
+    client: httpx.AsyncClient, station_id: int
+) -> list[Departure] | None:
     """Fetch departures from the transport API. Returns None on failure."""
+    url: str = f"https://v6.db.transport.rest/stops/{station_id}/departures"
+
     try:
-        response: httpx.Response = await client.get(DEPARTURES_URL)
+        response: httpx.Response = await client.get(url)
         response.raise_for_status()
         return extract_departures(response.json())
     except httpx.HTTPError, ValueError:
