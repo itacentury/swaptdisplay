@@ -1,7 +1,8 @@
+"""TUI application for displaying real-time public transport departures."""
+
 from datetime import datetime
 from typing import Any, Final, NamedTuple
 
-import dateparser
 import httpx
 from textual import work
 from textual.app import App, ComposeResult
@@ -13,6 +14,8 @@ HALLE_SAALE: Final[int] = 8010159
 
 
 class Departure(NamedTuple):
+    """Represents a single public transport departure."""
+
     line: str
     direction: str
     scheduled: str
@@ -21,12 +24,16 @@ class Departure(NamedTuple):
 
 
 class SwaptDisplay(App):
+    """Main TUI app that displays a live departure table."""
+
     def compose(self) -> ComposeResult:
+        """Compose the layout with header, footer, and data table."""
         yield Header()
         yield Footer()
         yield DataTable()
 
     async def on_mount(self) -> None:
+        """Initialize the table columns and load initial departure data."""
         table: DataTable = self.query_one(DataTable)
         table.add_columns(
             ("Linie", "line_col"),
@@ -46,9 +53,10 @@ class SwaptDisplay(App):
 
     @work(exclusive=True)
     async def update_table(self) -> None:
+        """Fetch fresh data and update all table cells."""
         table: DataTable = self.query_one(DataTable)
-        data: list[Departure] | None = await get_data()
-        if data is None:
+        departures: list[Departure] | None = await get_data()
+        if not departures:
             self.notify("Error updating table", severity="error")
             return
 
@@ -56,12 +64,13 @@ class SwaptDisplay(App):
             for j, col in enumerate(
                 ["line_col", "dest_col", "target_col", "actual_col", "delay_col"]
             ):
-                table.update_cell(row, col, data[i][j])
+                table.update_cell(row, col, departures[i][j])
 
         self.notify("Updated table!", severity="information")
 
 
 async def get_data() -> list[Departure] | None:
+    """Fetch departures from the transport API. Returns None on failure."""
     url: str = f"https://v6.db.transport.rest/stops/{MORITZPLATZ}/departures"
 
     async with httpx.AsyncClient(timeout=15) as client:
@@ -71,38 +80,38 @@ async def get_data() -> list[Departure] | None:
                 return None
 
             data: Any = response.json()
-            formatted_data: list[Departure] | None = format_data(data)
-
-            return formatted_data
+            departures: list[Departure] = extract_departures(data)
+            return departures
         except httpx.ReadTimeout:
             return None
 
 
-def format_data(data: Any) -> list[Departure] | None:
-    if not data:
+def parse_datetime(datetime_string: str) -> datetime | None:
+    """Parse an ISO 8601 datetime string. Returns None if parsing fails."""
+    try:
+        return datetime.fromisoformat(datetime_string)
+    except ValueError:
         return None
 
-    now: datetime = datetime.now()
-    processed_data: list[Departure] = []
-    for entry in data["departures"]:
-        try:
-            when: datetime | None = dateparser.parse(entry["when"])
-        except TypeError:
-            continue
 
+def extract_departures(data: Any) -> list[Departure]:
+    """Parse API response into a list of future departures."""
+    if not data:
+        return []
+
+    departures: list[Departure] = []
+    now: float = datetime.now().timestamp()
+    for entry in data["departures"]:
+        when: datetime | None = parse_datetime(entry["when"])
         if when is None:
             continue
 
-        if when.timestamp() < now.timestamp():
+        if when.timestamp() < now:
             continue
 
-        name: str = entry["line"]["name"]
+        line_name: str = entry["line"]["name"]
         direction: str = entry["direction"]
-        try:
-            planned_when: datetime | None = dateparser.parse(entry["plannedWhen"])
-        except TypeError:
-            continue
-
+        planned_when: datetime | None = parse_datetime(entry["plannedWhen"])
         if planned_when is None:
             continue
 
@@ -110,14 +119,13 @@ def format_data(data: Any) -> list[Departure] | None:
         expected: str = when.time().isoformat("minutes")
         delay: int = int((when - planned_when).total_seconds() // 60)
 
-        departure: Departure = Departure(name, direction, scheduled, expected, delay)
+        departures.append(Departure(line_name, direction, scheduled, expected, delay))
 
-        processed_data.append(departure)
-
-    return processed_data
+    return departures
 
 
 def main() -> None:
+    """Run the SwaptDisplay application."""
     app = SwaptDisplay()
     app.run()
 
