@@ -1,0 +1,20 @@
+Select {
+    margin: 0 1;
+}
+
+DataTable {
+    height: 1fr;
+}
+
+.datatable--header {
+    padding: 1 2;
+    text-style: bold;
+}
+
+.datatable--even-row {
+    padding: 1 2;
+}
+
+.datatable--odd-row {
+    padding: 1 2;
+}

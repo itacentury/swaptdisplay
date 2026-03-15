@@ -1,3 +1,2 @@
-- [ ] make design prettier
 - [ ] max 10 entries?
 - [ ] support to display 2 tables (2 stations)?

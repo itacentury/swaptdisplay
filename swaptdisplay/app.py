@@ -3,9 +3,10 @@
 from typing import Final
 
 import httpx
+from rich.text import Text
 from textual import on, work
 from textual.app import App, ComposeResult
-from textual.widgets import DataTable, Footer, Header, Select
+from textual.widgets import DataTable, Header, Select
 
 from .api import get_departures
 from .models import (
@@ -23,6 +24,8 @@ STATIONS_BY_ID: Final[dict[int, Station]] = create_dict_by_id(STATIONS)
 
 class SwaptDisplay(App):
     """Main TUI app that displays a live departure table."""
+
+    CSS_PATH = "app.tcss"
 
     def __init__(self, station_name_or_id: str | int) -> None:
         super().__init__()
@@ -49,7 +52,6 @@ class SwaptDisplay(App):
             type_to_search=True,
         )
         yield DataTable()
-        yield Footer()
 
     @on(Select.Changed)
     def select_changed(self, event: Select.Changed) -> None:
@@ -63,19 +65,29 @@ class SwaptDisplay(App):
         self._station = event.value  # type: ignore[arg-type, call-arg, assignment]
         self.update_table()
 
+    @staticmethod
+    def _style_departure(departure: Departure) -> tuple[str, str, str, Text, Text]:
+        """Convert a Departure into a styled row tuple with color-coded delay."""
+        if departure.delay <= 0:
+            style = "green"
+        elif departure.delay <= 5:
+            style = "yellow"
+        else:
+            style = "red"
+
+        expected = Text(departure.expected, style=style)
+        delay = Text(str(departure.delay), style=style)
+        return (departure.line, departure.direction, departure.scheduled, expected, delay)
+
     async def on_mount(self) -> None:
         """Initialize the table columns and load initial departure data."""
         table: DataTable = self.query_one(DataTable)
         table.loading = True
+        table.zebra_stripes = True
+        table.cursor_type = "row"
         table.add_columns("Linie", "Ziel", "Soll", "Ist", "Verspätung")
 
-        departures: list[Departure] | None = await get_departures(
-            self._client, self._station.station_id
-        )
-        if departures:
-            table.add_rows(departures)
-        table.loading = False
-
+        self.update_table()
         self.set_interval(10, self.update_table)
 
     async def on_unmount(self) -> None:
@@ -93,5 +105,5 @@ class SwaptDisplay(App):
             return
 
         table.clear()
-        table.add_rows(departures)
+        table.add_rows([self._style_departure(d) for d in departures])
         table.loading = False
