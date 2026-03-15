@@ -67,13 +67,7 @@ class SwaptDisplay(App):
         """Initialize the table columns and load initial departure data."""
         table: DataTable = self.query_one(DataTable)
         table.loading = True
-        table.add_columns(
-            ("Linie", "line_col"),
-            ("Ziel", "dest_col"),
-            ("Soll", "target_col"),
-            ("Ist", "actual_col"),
-            ("Verspätung", "delay_col"),
-        )
+        table.add_columns("Linie", "Ziel", "Soll", "Ist", "Verspätung")
 
         departures: list[Departure] | None = await get_departures(
             self._client, self._station.station_id
