@@ -24,9 +24,14 @@ STATIONS_BY_ID: Final[dict[int, Station]] = create_dict_by_id(STATIONS)
 class SwaptDisplay(App):
     """Main TUI app that displays a live departure table."""
 
-    def __init__(self) -> None:
+    def __init__(self, station: str | int) -> None:
         super().__init__()
-        self._station: Station = STATIONS_BY_NAME["Augsburg Hbf"]
+        self._station: Station = (
+            STATIONS_BY_NAME[station.lower()]
+            if isinstance(station, str)
+            else STATIONS_BY_ID[station]
+        )
+
         self._client: httpx.AsyncClient = httpx.AsyncClient(timeout=10)
         self.title = "Swapt Display"
 

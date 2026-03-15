@@ -35,7 +35,7 @@ def parse_stations() -> list[Station]:
 
 def create_dict_by_name(stations: list[Station]) -> dict[str, Station]:
     """Create a lookup dictionary mapping station names to their Station objects."""
-    return {station.name: station for station in stations}
+    return {station.name.lower(): station for station in stations}
 
 
 def create_dict_by_id(stations: list[Station]) -> dict[int, Station]:
