@@ -6,7 +6,6 @@ Augsburg Messe; 8000659
 Augsburg-Inningen; 8003079
 Augsburg Morellstr.; 8000660
 Friedberg(Augsburg); 8002099
-Hauptbahnhof; 781967
 Oberhausen Bahnhof; 781431
 Haunstetter Straße Bahnhof; 780251
 Hochzoll Bahnhof; 780183
