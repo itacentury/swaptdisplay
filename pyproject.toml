@@ -10,14 +10,13 @@ license = "GPL-3.0-or-later"
 dependencies = ["httpx>=0.28.1", "textual>=8.1.1"]
 
 [project.scripts]
-swaptdisplay = "main:main"
+swaptdisplay = "swaptdisplay.main:main"
 
 [dependency-groups]
 dev = ["textual-dev", "textual-serve", "ruff", "mypy"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
-only-include = ["main.py"]
+packages = ["swaptdisplay"]
 
 [tool.ruff]
 line-length = 90

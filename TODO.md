@@ -1,0 +1,6 @@
+- sort table by "Ist" time
+- make "Hauptbahnhof" default fallback
+- make design prettier
+- max 10 entries?
+- support to display 2 tables (2 stations)?
+- command line arguments

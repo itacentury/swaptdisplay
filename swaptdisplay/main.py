@@ -7,8 +7,8 @@ from textual import on, work
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header, Select
 
-from api import get_departures
-from models import (
+from .api import get_departures
+from .models import (
     Departure,
     Station,
     create_dict_by_id,

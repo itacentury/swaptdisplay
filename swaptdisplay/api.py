@@ -3,7 +3,7 @@ from typing import Any
 
 import httpx
 
-from models import Departure
+from .models import Departure
 
 
 async def get_departures(

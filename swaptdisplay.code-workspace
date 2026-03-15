@@ -19,7 +19,17 @@
             "editor.formatOnPaste": true,
             "editor.defaultFormatter": "tamasfe.even-better-toml"
         },
-        "mypy-type-checker.importStrategy": "fromEnvironment"
+        "mypy-type-checker.importStrategy": "fromEnvironment",
+        "files.exclude": {
+            "**/__pycache__": true,
+            "**/.mypy_cache": true,
+            "**/.ruff_cache": true,
+        },
+        "search.exclude": {
+            "**/__pycache__": true,
+            "**/.mypy_cache": true,
+            "**/.ruff_cache": true,
+        },
     },
     "extensions": {
         "recommendations": [
@@ -53,7 +63,7 @@
             {
                 "label": "Check",
                 "type": "shell",
-                "command": "uv run ruff format . && uv run ruff check . && uv run mypy main.py",
+                "command": "uv run ruff format . && uv run ruff check . && uv run mypy swaptdisplay/",
                 "group": "build",
             },
             {
