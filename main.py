@@ -8,9 +8,17 @@ from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header, Select
 
 from api import get_departures
-from models import Departure, Station, parse_stations
+from models import (
+    Departure,
+    Station,
+    create_dict_by_id,
+    create_dict_by_name,
+    parse_stations,
+)
 
 STATIONS: Final[list[Station]] = parse_stations()
+STATIONS_BY_NAME: Final[dict[str, Station]] = create_dict_by_name(STATIONS)
+STATIONS_BY_ID: Final[dict[int, Station]] = create_dict_by_id(STATIONS)
 
 
 class SwaptDisplay(App):
@@ -18,7 +26,7 @@ class SwaptDisplay(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self._station: Station = STATIONS[0]
+        self._station: Station = STATIONS_BY_NAME["Augsburg Hbf"]
         self._client: httpx.AsyncClient = httpx.AsyncClient(timeout=10)
         self.title = "Swapt Display"
 
@@ -28,6 +36,7 @@ class SwaptDisplay(App):
         yield Select(
             ((station.name, station) for station in STATIONS),
             allow_blank=False,
+            value=self._station,
             type_to_search=True,
         )
         yield DataTable()

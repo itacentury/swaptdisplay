@@ -31,3 +31,13 @@ def parse_stations() -> list[Station]:
         stations.append(Station(name, int(station_id)))
     stations.sort()
     return stations
+
+
+def create_dict_by_name(stations: list[Station]) -> dict[str, Station]:
+    """Create a lookup dictionary mapping station names to their Station objects."""
+    return {station.name: station for station in stations}
+
+
+def create_dict_by_id(stations: list[Station]) -> dict[int, Station]:
+    """Create a lookup dictionary mapping station IDs to their Station objects."""
+    return {station.station_id: station for station in stations}
