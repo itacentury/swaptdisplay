@@ -80,7 +80,6 @@ class SwaptDisplay(App):
         )
         if departures:
             table.add_rows(departures)
-        table.sort("actual_col")
         table.loading = False
 
         self.set_interval(10, self.update_table)
@@ -101,5 +100,4 @@ class SwaptDisplay(App):
 
         table.clear()
         table.add_rows(departures)
-        table.sort("actual_col")
         table.loading = False

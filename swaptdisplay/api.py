@@ -61,4 +61,5 @@ def extract_departures(data: Any) -> list[Departure]:
         except KeyError:
             continue
 
+    departures.sort(key=lambda e: (e.expected, e.scheduled, e.line))
     return departures
