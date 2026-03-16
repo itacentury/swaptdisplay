@@ -1,7 +1,10 @@
-# swaptdisplay
+# SwaptDisplay
 
 Terminal-based departure board for public transit, built with [Textual](https://textual.textualize.io/).
 Uses the [v6.db.transport.rest](https://v6.db.transport.rest/getting-started.html) API for real-time departure data.
+
+![Single station view](docs/images/single-station.svg)
+![Dual station view](docs/images/dual-station.svg)
 
 ## Installation
 
