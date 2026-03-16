@@ -19,3 +19,7 @@ DataTable {
 .datatable--odd-row {
     padding: 1 2;
 }
+
+#firstPanel, #secondPanel {
+    height: 1fr;
+}

@@ -1,3 +1,5 @@
+"""API client for fetching public transport departures."""
+
 from datetime import UTC, datetime
 from typing import Any
 
@@ -32,7 +34,7 @@ def parse_datetime(datetime_string: str) -> datetime | None:
 
 
 def extract_departures(data: Any) -> list[Departure]:
-    """Parse API response into a list of future departures."""
+    """Extract and parse departures from the API response."""
     if not data:
         return []
 
