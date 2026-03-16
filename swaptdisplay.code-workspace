@@ -19,6 +19,12 @@
             "editor.formatOnPaste": true,
             "editor.defaultFormatter": "tamasfe.even-better-toml"
         },
+        "[markdown]": {
+            "editor.formatOnSave": true,
+            "editor.formatOnPaste": true,
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "editor.wordWrap": "on",
+        },
         "mypy-type-checker.importStrategy": "fromEnvironment",
         "files.exclude": {
             "**/__pycache__": true,
@@ -36,7 +42,8 @@
             "charliermarsh.ruff",
             "ms-python.python",
             "ms-python.mypy-type-checker",
-            "tamasfe.even-better-toml"
+            "tamasfe.even-better-toml",
+            "esbenp.prettier-vscode"
         ]
     },
     "tasks": {
